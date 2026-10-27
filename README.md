@@ -54,9 +54,16 @@ docker compose exec app python -m procurement_watch web-password
 | `DOCKERHUB_USERNAME` | Docker Hub 用户名 |
 | `DOCKERHUB_TOKEN` | 具有对应仓库写入权限的 Docker Hub Access Token |
 
-镜像名固定为 `<Docker Hub 用户名>/supply-monitor`。向 `main` / `master` 推送、推送 `v*` 标签或手动执行工作流时，先测试再构建并上传 `linux/amd64`、`linux/arm64` 镜像；Pull Request 只执行测试和镜像验收，不登录 Docker Hub、不上传镜像。
+镜像名固定为 `<Docker Hub 用户名>/supply-monitor`。工作流仅在推送 **`Vx.x.x`** 版本标签时触发（大写 `V`，三段数字，例如 `V1.2.3`），先测试再构建并上传 `linux/amd64`、`linux/arm64` 镜像。普通分支推送、Pull Request、其他格式的标签和手动操作不触发此工作流。
 
-默认分支生成 `latest` 标签；`v1.2.3` 等版本标签生成 `1.2.3`、`1.2`，同时保留提交 SHA 标签。工作流参考 [Docker 官方 GitHub Actions 流程](https://docs.docker.com/guides/gha/)，提供构建缓存、SBOM 和 provenance。容器验收会验证首次密码初始化、登录、静态资源、1 分钟默认间隔、镜像不含生产凭据，以及重启后设置持久化；测试期间暂停采集，不连接生产采集站点或 QQ 机器人。
+发布示例：
+
+```sh
+git tag V1.2.3
+git push origin V1.2.3
+```
+
+每次版本发布更新 `latest` 标签；`V1.2.3` 标签生成 `1.2.3`、`1.2` 镜像标签，同时保留提交 SHA 标签。工作流先移除大写 `V` 再生成镜像版本，部署文件指向该版本镜像。工作流参考 [Docker 官方 GitHub Actions 流程](https://docs.docker.com/guides/gha/)，提供构建缓存、SBOM 和 provenance。容器验收会验证首次密码初始化、登录、静态资源、1 分钟默认间隔、镜像不含生产凭据，以及重启后设置持久化；测试期间暂停采集，不连接生产采集站点或 QQ 机器人。
 
 发布成功后，在 Actions 该次运行的 **Artifacts → docker-compose-deployment** 下载 `compose.hub.yaml`。其中已填好实际 Docker Hub 镜像名和本次发布标签，不需要源码或环境变量：
 
