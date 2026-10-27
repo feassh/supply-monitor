@@ -63,7 +63,7 @@ git tag V1.2.3
 git push origin V1.2.3
 ```
 
-每次版本发布更新 `latest` 标签；`V1.2.3` 标签生成 `1.2.3`、`1.2` 镜像标签，同时保留提交 SHA 标签。工作流先移除大写 `V` 再生成镜像版本，部署文件指向该版本镜像。工作流参考 [Docker 官方 GitHub Actions 流程](https://docs.docker.com/guides/gha/)，提供构建缓存、SBOM 和 provenance。容器验收会验证首次密码初始化、登录、静态资源、1 分钟默认间隔、镜像不含生产凭据，以及重启后设置持久化；测试期间暂停采集，不连接生产采集站点或 QQ 机器人。
+每次版本发布更新 `latest` 标签；`V1.2.3` 标签生成 `1.2.3`、`1.2` 镜像标签，同时保留提交 SHA 标签。工作流先移除大写 `V` 再生成镜像版本，部署文件指向该版本镜像。工作流参考 [Docker 官方 GitHub Actions 流程](https://docs.docker.com/guides/gha/)，提供构建缓存、SBOM 和 provenance。发布前执行代码测试和 Compose 配置校验，随后直接构建并推送镜像，不运行容器启动、重启或健康检查等待脚本。镜像自身的运行时健康检查仍由 Docker 管理。
 
 发布成功后，在 Actions 该次运行的 **Artifacts → docker-compose-deployment** 下载 `compose.hub.yaml`。其中已填好实际 Docker Hub 镜像名和本次发布标签，不需要源码或环境变量：
 
@@ -210,7 +210,6 @@ tests/test_backend.py
 tests/test_web.py
 tests/test_push.py
 tests/test_deployment.py
-scripts/smoke_container.py
 scripts/render_hub_compose.py
 Dockerfile
 compose.yaml
