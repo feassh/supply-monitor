@@ -28,7 +28,18 @@ docker compose logs app
 
 无需 `.env`、机器人环境变量、配置文件挂载或其他业务启动参数。默认每 **1 分钟**采集第一页；关键词、采集频率和推送配置在 Web 中管理。现有本地项目的采集频率也已调整为 1 分钟；后续升级不会覆盖在 Web 保存的新频率。
 
-容器使用 Waitress 生产 WSGI 服务，以普通用户运行，监听 8000。`monitor-data` 命名卷挂载到 `/app/data`，保留 SQLite、管理密码、会话密钥和机器人令牌解密密钥。重建/更新容器保留设置；不要在保留数据的部署中删除该卷。未设置管理员密码之前，不自动采集或发送通知。
+容器使用 Waitress 生产 WSGI 服务，监听 8000。启动入口先以 root 将 `/app/data` 和已存在的数据库、SQLite 日志、工作锁、推送密钥文件归属调整为 `10001:10001`，再清除附加组并降权到该普通用户启动应用。权限修复不递归处理其他宿主机文件，也不跟随符号链接。`monitor-data` 命名卷保留 SQLite、管理密码、会话密钥和机器人令牌解密密钥。重建/更新容器保留设置；不要在保留数据的部署中删除该卷。未设置管理员密码之前，不自动采集或发送通知。
+
+也支持宿主机目录挂载 `./data:/app/data`。新镜像会自动处理 Docker 创建的 root 所有目录；无需设置 `user` 或额外业务参数。如果使用旧镜像遇到 `sqlite3.OperationalError: unable to open database file`，可在 Compose 文件所在目录执行：
+
+```sh
+docker compose down
+sudo mkdir -p ./data
+sudo chown -R 10001:10001 ./data
+docker compose up -d
+```
+
+这些命令保留现有数据。只读挂载、NFS root squash 或 SELinux 限制仍需在宿主机按实际部署处理，不要用 `chmod 777` 放开目录权限。
 
 镜像仅打包源码和 `config.example.toml`；不会携带本机 `config.toml`、数据库、登录密码或生产机器人令牌。新部署需要在 Web“推送配置”中填写自己的机器人信息。`/healthz` 提供无业务数据的健康检查。
 
@@ -42,7 +53,7 @@ docker compose up -d --build
 重置容器中的管理密码（在终端交互输入）：
 
 ```sh
-docker compose exec app python -m procurement_watch web-password
+docker compose exec --user 10001:10001 app python -m procurement_watch web-password
 ```
 
 ## GitHub Actions 发布到 Docker Hub

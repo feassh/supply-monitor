@@ -18,7 +18,8 @@ COPY procurement_watch/ ./procurement_watch/
 COPY config.example.toml ./config.toml
 RUN pip install --no-cache-dir --no-deps .
 
-USER monitor
+# 入口仅以 root 修复挂载目录权限，随后立即降权到 10001:10001 运行应用。
+USER root
 EXPOSE 8000
 VOLUME ["/app/data"]
 
