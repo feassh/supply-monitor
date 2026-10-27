@@ -1,0 +1,9 @@
+<aside class="sidebar">
+  <a href="/" class="brand" aria-label="消毒供应采集系统首页"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>消毒供应<br>采集系统</span></a>
+  <div class="nav-label">工作空间 <span>WORKSPACE</span></div>
+  <nav aria-label="主菜单">
+    <a href="/" class="nav-item {{ 'selected' if current_page == 'tasks' else '' }}" {% if current_page == 'tasks' %}aria-current="page"{% endif %} aria-label="采集任务"><svg class="icon" aria-hidden="true"><use href="#i-grid"></use></svg><span>采集任务</span>{% if current_page == 'tasks' %}<span class="nav-dot"></span>{% endif %}</a>
+    <a href="/push" class="nav-item {{ 'selected' if current_page == 'push' else '' }}" {% if current_page == 'push' %}aria-current="page"{% endif %} aria-label="推送配置"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg><span>推送配置</span>{% if current_page == 'push' %}<span class="nav-dot"></span>{% endif %}</a>
+  </nav>
+  <div class="sidebar-bottom"><div class="sidebar-note"><span class="live-dot"></span>让信息主动找到你</div><div class="edition">SUPPLY MONITOR <span>V1.0</span></div></div>
+</aside>

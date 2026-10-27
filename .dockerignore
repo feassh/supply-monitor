@@ -1,0 +1,14 @@
+# 只允许构建所需的源码与默认配置进入上下文。
+*
+!Dockerfile
+!requirements.txt
+!pyproject.toml
+!config.example.toml
+!procurement_watch/
+!procurement_watch/**
+**/__pycache__/
+**/*.pyc
+**/*.db
+**/*.db-*
+**/*.push.key
+**/.env

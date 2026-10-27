@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+data/
+config.toml
+live-ccgp.html
+*.push.key
+build/
+dist/

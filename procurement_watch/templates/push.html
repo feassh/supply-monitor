@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% macro icon(name, cls='') %}<svg class="icon {{ cls }}" aria-hidden="true"><use href="#i-{{ name }}"></use></svg>{% endmacro %}
+{% block title %}推送配置 · 消毒供应采集系统{% endblock %}
+{% block page %}push{% endblock %}
+{% block content %}
+{% set current_page = 'push' %}{% include "sidebar.html" %}
+<div class="workspace">
+  <header class="topbar"><div class="breadcrumb">工作空间 {{ icon('chevron') }} <span>推送配置</span></div><div class="account"><span class="account-label">管理控制台</span><span class="avatar">管</span><button id="logout" class="icon-button" aria-label="退出登录" title="退出登录">{{ icon('logout') }}</button></div></header>
+  <main class="push-main">
+    <section class="page-heading"><div><div class="eyebrow">NOTIFICATION CHANNEL</div><h1>推送配置<span class="heading-dot">.</span></h1><p>连接你的 QQ 群，让值得关注的新公告及时抵达。</p></div><span class="provider-label">NAPCAT <span>/ ONEBOT 11</span></span></section>
+    <div class="push-layout">
+      <section class="panel push-settings"><div class="push-panel-heading"><span class="source-icon">{{ icon('bell') }}</span><div><h2>QQ 群机器人</h2><p>通过 NapCat HTTP 接口发送群消息</p></div><span id="push-badge" class="badge neutral">加载中</span></div>
+        <form id="push-form">
+          <div class="push-fields">
+            <div class="field-group"><label for="bot-url">机器人接口 URL <span>必填</span></label><input id="bot-url" type="url" required maxlength="2048" placeholder="http://你的服务器:3000/send_group_msg" autocomplete="off"><p class="field-help">填写完整的群消息接口地址，包含 /send_group_msg。</p></div>
+            <div class="field-group"><label for="bot-group">QQ群组 ID <span>必填</span></label><input id="bot-group" type="text" inputmode="numeric" pattern="[0-9]{1,20}" required maxlength="20" placeholder="输入接收公告的 QQ 群号" autocomplete="off"><p class="field-help">机器人需要已加入该群，并具有发送消息的权限。</p></div>
+            <div class="field-group"><div class="token-label"><label for="bot-token">访问令牌 <span>Access Token</span></label><span id="token-status" class="token-status">未设置</span></div><input id="bot-token" type="password" autocomplete="new-password" maxlength="4096" placeholder="填写 Bearer Token，无需添加 Bearer 前缀"><p class="field-help">令牌加密保存，不会回显。已设置时留空即可保留。</p><label class="clear-token"><input id="clear-token" type="checkbox">清除已保存的令牌</label></div>
+            <div class="push-enable-row"><div><label for="push-enabled">自动推送</label><p>有新的标题匹配公告时，自动发送到指定群组。</p></div><label class="switch"><input id="push-enabled" type="checkbox" aria-label="启用自动推送"><span class="switch-track"></span></label></div>
+            <div class="push-queue-note">{{ icon('log') }}<span id="queue-note">启用后将自动处理待发送的公告。</span></div>
+          </div>
+          <div class="push-form-footer"><span id="save-state">配置保存在本机，重启后依然有效。</span><button id="save-push" class="button primary" type="submit">{{ icon('check') }}保存配置</button></div>
+        </form>
+      </section>
+      <aside class="push-side">
+        <section class="panel channel-panel"><div class="panel-header"><h2>通道状态</h2><span class="subtle-label">CHANNEL</span></div><div class="channel-state"><span id="channel-indicator" class="channel-indicator">{{ icon('bell') }}</span><div><strong id="channel-title">读取配置中</strong><p id="channel-subtitle">QQ 群消息通知通道</p></div></div><dl class="channel-details"><div><dt>接收群组</dt><dd id="channel-group">—</dd></div><div><dt>等待推送</dt><dd id="channel-pending">0 条</dd></div><div><dt>最近测试</dt><dd id="channel-test">尚未测试</dd></div></dl><div id="test-result" class="test-result" role="status" hidden></div><div class="channel-test-area"><button id="test-push" class="button secondary" type="button" disabled>{{ icon('play') }}发送测试消息</button><p id="test-help">请先保存配置，再测试连接。</p></div></section>
+        <section class="panel message-preview"><div class="panel-header"><h2>通知预览</h2><span class="subtle-label">SAMPLE</span></div><div class="sample-message"><div class="sample-avatar">采</div><div class="sample-bubble"><strong>采购公告更新</strong><p>1. 消毒供应相关设备采购公告<br><span>发布时间：2026-10-27 18:00<br>采购人：某医院<br>匹配关键词：消毒供应</span></p><span class="sample-link">公告原文链接 ↗</span></div></div><p class="preview-foot">纯文字消息 · 自动整理 · 附带原文链接</p></section>
+      </aside>
+    </div>
+    <footer class="page-footer"><span><span class="live-dot"></span>只推送新增匹配公告，已发送记录自动去重</span><span>消毒供应采集系统</span></footer>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+database = "data/watch.db"
+keywords = ["医院", "电子内窥镜"] # 标题包含任意一个关键词即匹配；忽略大小写
+notify_on_first_run = false
+
+[schedule]
+value = 1
+unit = "minutes" # minutes / hours / days；后续 Web 下拉框复用此枚举
+
+[http]
+timeout_seconds = 30
+attempts = 3
+user_agent = "ProcurementWatch/0.1 (+personal procurement monitoring)"
+
+[[sources]]
+id = "ccgp-zhejiang"
+type = "ccgp"
+enabled = true
+url = "https://search.ccgp.gov.cn/bxsearch?searchtype=1&page_index=1&bidSort=0&buyerName=&projectId=&pinMu=0&bidType=0&dbselect=bidx&kw=&start_time=2026%3A07%3A26&end_time=2026%3A10%3A26&timeType=4&displayZone=%E6%B5%99%E6%B1%9F&zoneId=33+not+3302&pppStatus=0&agentName="
+date_mode = "rolling" # rolling 每次查询最近 lookback_days 天；fixed 保持 URL 日期
+lookback_days = 90
+
+[notification]
+enabled = false # 初始默认；在 Web 保存推送配置后，以 SQLite 中的配置为准
+url = "" # 如 http://127.0.0.1:3000/send_group_msg
+token_env = "QQ_BOT_TOKEN" # 可选 Bearer Token，读取环境变量
+group_id = ""
+max_items = 5 # 每条消息最多包含几条公告；剩余公告分批发送
+max_chars = 3500
+timeout_seconds = 15
+retry_seconds = 60
+success_mode = "onebot" # onebot 检查 status/retcode；http 仅检查 HTTP 2xx

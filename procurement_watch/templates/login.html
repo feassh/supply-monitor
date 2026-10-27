@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ '设置管理密码' if setup else '登录' }} · 消毒供应采集系统{% endblock %}
+{% block page %}login{% endblock %}
+{% block content %}
+<main class="login-layout">
+  <section class="login-story"><a class="login-brand" href="/">消毒供应采集系统<span>SUPPLY MONITOR</span></a><div class="login-story-copy"><div class="eyebrow">INFORMATION, IN FOCUS.</div><h1>把关注的信息，<br>交给系统守候<span>。</span></h1><p>持续采集，精准匹配，及时提醒。<br>让每一条采购线索，都有迹可循。</p><div class="login-lines"><div><span>01</span> 自动采集</div><div><span>02</span> 关键词监控</div><div><span>03</span> 新公告提醒</div></div></div><div class="login-copyright">专注信息，连接价值。<span>SUPPLY MONITOR / 2026</span></div></section>
+  <section class="login-form-area"><div class="login-card"><span class="login-symbol"><svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg></span><div class="eyebrow">{{ 'WELCOME ABOARD' if setup else 'WELCOME BACK' }}</div><h2>{{ '创建管理密码' if setup else '欢迎回来' }}</h2><p>{{ '首次使用，为你的管理工作空间设置密码。' if setup else '输入管理密码，进入你的采集工作空间。' }}</p>
+  {% if setup and not setup_allowed %}<div class="login-error">请在服务器终端运行 web-password 设置管理密码。</div>{% else %}
+  <form id="login-form" data-setup="{{ 'true' if setup else 'false' }}">{% if setup and setup_token_required %}<label for="setup-token">初始化验证码</label><input id="setup-token" type="text" autocomplete="off" required placeholder="从 docker compose logs 中获取">{% endif %}<label for="password">管理密码</label><input id="password" type="password" autocomplete="{{ 'new-password' if setup else 'current-password' }}" required {% if setup %}minlength="10"{% endif %} maxlength="256" placeholder="{{ '至少 10 个字符' if setup else '请输入管理密码' }}" autofocus>
+  {% if setup %}<label for="confirm-password">确认密码</label><input id="confirm-password" type="password" autocomplete="new-password" required minlength="10" maxlength="256" placeholder="再次输入管理密码">{% endif %}
+  <div id="login-error" class="login-error" role="alert" hidden></div><button class="button primary" type="submit"><span>{{ '创建并进入控制台' if setup else '进入控制台' }}</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></form>{% endif %}
+  <div class="login-security"><svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg> 密码加密存储 · 仅授权管理员可访问</div></div></section>
+</main>
+{% endblock %}
